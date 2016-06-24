@@ -1,0 +1,19 @@
+{
+  "name": "dw-webdav",
+  "version": "1.0.0",
+  "description": "Webdav utilities for working with demandware",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Demandware",
+    "WebDav"
+  ],
+  "author": "paul.martin@cqlcorp.com",
+  "license": "ISC",
+  "dependencies": {
+    "progress-stream": "^1.2.0",
+    "request": "^2.72.0"
+  }
+}
