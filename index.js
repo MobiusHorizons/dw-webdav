@@ -62,6 +62,14 @@ class DWServer {
     });
   }
 
+  upload_stream(remote_path, reportProgress){
+    remote_path = url.resolve(this.remoteBase,remote_path);
+      var progress_stream = progress(reportProgress);
+
+      return progress_stream
+      .pipe(request.put(remote_path, {auth : this.auth_info}));
+  }
+
   delete(remote_path){
     remote_path = url.resolve(this.remoteBase,remote_path);
     return new Promise((resolve, reject) => {
@@ -86,12 +94,22 @@ class DWServer {
         },
         url    : remote_path,
         auth   : this.auth_info,
-      }).on('error', (error) => {
-        reject(error);
       })
-      .on('end', () => {
-        resolve();
-      });
+      .on('error', reject)
+      .on('end', resolve);
+    })
+  }
+
+  mkdir(remote_path){
+    remote_path = url.resolve(this.remoteBase,remote_path);
+    return new Promise((resolve, reject) => {
+      request({
+        method : 'MKCOL',
+        url    : remote_path,
+        auth   : this.auth_info,
+      })
+      .on('error', reject)
+      .on('end', resolve);
     })
   }
 }
