@@ -4,11 +4,13 @@
 'use strict';
 
 var 
-  fs      = require('fs'),
-  path    = require('path'),
-  progress = require('progress-stream'),
-  request = require('request'),
-  url     = require('url')
+  fs        = require('fs'),
+  path      = require('path'),
+  progress  = require('progress-stream'),
+  request   = require('request'),
+  stream    = require('stream'),
+  url       = require('url'),
+  XmlStream = require('xml-stream')
 ;
 
 class DWServer {
@@ -97,6 +99,36 @@ class DWServer {
       })
       .on('error', reject)
       .on('end', resolve);
+    })
+  }
+
+  get_stream(remote_path, options){
+    remote_path = url.resolve(this.remoteBase,remote_path);
+    options.url = remote_path;
+    options.auth = this.auth_info;
+    return request.get(options, options.cb);
+  }
+
+  ls(remote_path){
+    remote_path = url.resolve(this.remoteBase, remote_path);
+    return new Promise((resolve, reject) => {
+      let propstat = request({
+        method : 'PROPFIND',
+        url    : remote_path,
+        auth   : this.auth_info,
+      })
+
+      let entries = [];
+      let xml = new XmlStream(propstat)
+      xml.on('endElement: response', entry => {
+        entries.push(entry)
+      })
+      xml.on('end', () => {
+        resolve(entries);
+      })
+      xml.on('error', (error) => {
+        reject(error)
+      })
     })
   }
 

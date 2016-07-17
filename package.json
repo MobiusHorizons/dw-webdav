@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "progress-stream": "^1.2.0",
-    "request": "^2.72.0"
+    "request": "^2.72.0",
+    "xml-stream": "^0.4.5"
   }
 }
