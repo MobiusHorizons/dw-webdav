@@ -10,7 +10,7 @@ var
   request   = require('request'),
   stream    = require('stream'),
   url       = require('url'),
-  XmlStream = require('xml-stream')
+  XmlStream = require('xml-flow')
 ;
 
 class DWServer {
@@ -120,7 +120,7 @@ class DWServer {
 
       let entries = [];
       let xml = new XmlStream(propstat)
-      xml.on('endElement: response', entry => {
+      xml.on('tag:response', entry => {
         entries.push(entry)
       })
       xml.on('end', () => {
