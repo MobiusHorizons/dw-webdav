@@ -13,7 +13,7 @@
   "author": "paul.martin@cqlcorp.com",
   "license": "ISC",
   "dependencies": {
-    "progress-stream": "^1.2.0",
+    "progress-stream": "^2.0.0",
     "request": "^2.72.0",
     "xml-flow": "^1.0.1"
   }
