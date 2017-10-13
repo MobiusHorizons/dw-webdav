@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var 
+var
   fs        = require('fs'),
   path      = require('path'),
   progress  = require('progress-stream'),
@@ -14,13 +14,14 @@ var
 ;
 
 class DWServer {
-  constructor(host, username, password){
+  constructor(host, userAgent, username, password){
     this.auth_info = {
       'user' : username,
       'pass' : password
-    }
-    this.host = host;
-    this.remoteBase = "https://" + host + "/on/demandware.servlet/webdav/Sites/Cartridges/"; 
+    };
+    this.userAgent  = userAgent;
+    this.host       = host;
+    this.remoteBase = "https    : //" + host + "/on/demandware.servlet/webdav/Sites/Cartridges/";
   }
 
   auth(){
@@ -28,6 +29,9 @@ class DWServer {
       request.get({
         url  : this.remoteBase,
         auth : this.auth_info,
+        headers : {
+          'User-Agent' : this.userAgent,
+        },
       }, function(error, response, body){
         if (error != null){
           reject(error);
@@ -53,8 +57,13 @@ class DWServer {
     return new Promise((resolve, reject) => {
       var stats = fs.statSync(local_path)
       fs.createReadStream(local_path)
-        .pipe(progress({length : stats.size}, reportProgress)) 
-        .pipe(request.put(remote_path, {auth : this.auth_info}))
+        .pipe(progress({length : stats.size}, reportProgress))
+        .pipe(request.put(remote_path, {
+          auth : this.auth_info,
+          headers : {
+            'User-Agent' : this.userAgent,
+          },
+        }))
         .on('end', () => {
           resolve('upload', local_path);
         })
@@ -69,7 +78,12 @@ class DWServer {
       var progress_stream = progress(reportProgress);
 
       return progress_stream
-      .pipe(request.put(remote_path, {auth : this.auth_info}));
+      .pipe(request.put(remote_path, {
+        auth : this.auth_info,
+        headers : {
+          'User-Agent' : this.userAgent,
+        },
+      }));
   }
 
   delete(remote_path){
@@ -78,6 +92,9 @@ class DWServer {
       request.delete({
         url    : remote_path,
         auth   : this.auth_info,
+        headers : {
+          'User-Agent' : this.userAgent,
+        },
       }).on('error', (error) => {
         reject(error);
       })
@@ -92,10 +109,13 @@ class DWServer {
     return new Promise((resolve, reject) => {
       request.post({
         form : {
-          method: 'UNZIP' 
+          method: 'UNZIP'
         },
         url    : remote_path,
         auth   : this.auth_info,
+        headers : {
+          'User-Agent' : this.userAgent,
+        },
       })
       .on('error', reject)
       .on('end', resolve);
@@ -103,9 +123,12 @@ class DWServer {
   }
 
   get_stream(remote_path, options){
-    remote_path = url.resolve(this.remoteBase,remote_path);
-    options.url = remote_path;
-    options.auth = this.auth_info;
+    remote_path     = url.resolve(this.remoteBase,remote_path);
+    options.url     = remote_path;
+    options.auth    = this.auth_info;
+    options.headers = options.headers || {};
+    options.headers['User-Agent'] = this.userAgent;
+
     return request.get(options, options.cb);
   }
 
@@ -116,6 +139,9 @@ class DWServer {
         method : 'PROPFIND',
         url    : remote_path,
         auth   : this.auth_info,
+        headers : {
+          'User-Agent' : this.userAgent,
+        },
       })
 
       let entries = [];
@@ -139,6 +165,9 @@ class DWServer {
         method : 'MKCOL',
         url    : remote_path,
         auth   : this.auth_info,
+        headers : {
+          'User-Agent' : this.userAgent,
+        },
       })
       .on('error', reject)
       .on('end', resolve);
