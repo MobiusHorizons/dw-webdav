@@ -23,9 +23,6 @@ class DWServer {
     this.host       = host;
     this.remoteBase = "https    : //" + host + "/on/demandware.servlet/webdav/Sites/Cartridges/";
 
-    console.log("----------------------------");
-    console.log('USER AGENT: ', this.userAgent);
-    console.log("----------------------------");
   }
 
   auth(){
