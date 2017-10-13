@@ -21,7 +21,7 @@ class DWServer {
     };
     this.userAgent  = userAgent;
     this.host       = host;
-    this.remoteBase = "https    : //" + host + "/on/demandware.servlet/webdav/Sites/Cartridges/";
+    this.remoteBase = "https://" + host + "/on/demandware.servlet/webdav/Sites/Cartridges/";
 
   }
 
@@ -35,6 +35,7 @@ class DWServer {
         },
       }, function(error, response, body){
         if (error != null){
+          console.log(error);
           reject(error);
           return;
         }
